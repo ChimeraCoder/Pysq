@@ -48,7 +48,7 @@ class UserFinder:
         '''Given an FSAuthenticator, search for a user'''
         self.authenticator = authenticator
 
-    def findUser(self, id):
+    def findUser(self, id='self'):
         '''Retrieve the User associated with the given id. Raise an error if the authenticator is not authorized to access the User'''
         #Issue a request to create and return a new user object
         #return a new User object
