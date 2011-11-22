@@ -293,6 +293,21 @@ class Venue:
         try: return self.data['contact']
         except KeyError: return None
 
+    def twitter(self):
+        '''Return the venues's Twitter contact information'''
+        try: return self.data['contact']['twitter']
+        except KeyError: return None
+
+    def phone(self):
+        '''Return the venues's Phone number'''
+        try: return self.data['contact']['phone']
+        except KeyError: return None
+        
+    def formattedPhone(self):
+        '''Return the venues's Twitter contact information'''
+        try: return self.data['contact']['formattedPhone']
+        except KeyError: return None
+
     def location(self):
         '''Return the location of the venue'''
         try: return self.data['location']
