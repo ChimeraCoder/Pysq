@@ -330,6 +330,20 @@ class Venue:
         '''Return the number of tips'''
         try: return self.data['tips']['count']
         except KeyError: return None
+        
+        
+
+class VenueFinder:
+    def __init__(self, authenticator):
+        '''Given an FSAuthenticator, search for a user'''
+        self.authenticator = authenticator
+
+    def findVenue(self, id):
+        '''Retrieve the Venue by id. Returns Venue object'''
+        result = self.authenticator.userless_query('venues/' + id)
+        return Venue(self.authenticator, result['venue'])
+    
+    
 
 class Photo:
 
