@@ -28,12 +28,23 @@ class FSAuthenticator:
         #The oauth_token should always be the first parameter passed
         return "?oauth_token=" + self.access_token
 
+    def client_credentials(self):
+        return '?client_id={0}&client_secret={1}'.format(self.client_id, self.client_secret)
+        
     def query(self, path, parameters=None):
         '''Given a query path and parameters, return the json response to the query'''
         if parameters == None:
             parameters = {}
         #parameters should be given as a dictionary
         url = "https://api.foursquare.com/v2/" + path + self.auth_param() + self.expand_params(parameters)
+        return json.load(urllib2.urlopen(url))['response']
+    
+    def userless_query(self, path, parameters=None):
+        '''Given a query path and parameters, return the json response to the query'''
+        if parameters == None:
+            parameters = {}
+        #parameters should be given as a dictionary
+        url = "https://api.foursquare.com/v2/" + path + self.client_credentials() + self.expand_params(parameters)
         return json.load(urllib2.urlopen(url))['response']
 
     def expand_params(self, parameters):
