@@ -293,10 +293,10 @@ class Venue:
         try: return self.data['contact']
         except KeyError: return None
 
-    #def location(self):
-    #    '''Return the location of the venue'''
-    #    try: return Location(self.data['location'])
-    #    except KeyError: return None
+    def location(self):
+        '''Return the location of the venue'''
+        try: return self.data['location']
+        except KeyError: return None
 
     def verified(self):
         '''Return True if the venue has been verified'''
