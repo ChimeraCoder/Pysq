@@ -4,6 +4,7 @@ import json
 import time
 
 MAX_CHECKIN_REQUEST = 250
+API_DATEVERIFIED = 20111120 #Indication that the client is up to the specified date YYYYMMDD 
 
 class FSAuthenticator:
     def __init__(self, client_id, client_secret, redirect_uri):
@@ -35,7 +36,7 @@ class FSAuthenticator:
         '''Given a query path and parameters, return the json response to the query'''
         if parameters == None:
             parameters = {}
-        #parameters should be given as a dictionary
+        parameters['v'] = API_DATEVERIFIED
         url = "https://api.foursquare.com/v2/" + path + self.auth_param() + self.expand_params(parameters)
         return json.load(urllib2.urlopen(url))['response']
     
@@ -43,7 +44,7 @@ class FSAuthenticator:
         '''Given a query path and parameters, return the json response to the query'''
         if parameters == None:
             parameters = {}
-        #parameters should be given as a dictionary
+        parameters['v'] = API_DATEVERIFIED
         url = "https://api.foursquare.com/v2/" + path + self.client_credentials() + self.expand_params(parameters)
         return json.load(urllib2.urlopen(url))['response']
 
@@ -53,6 +54,8 @@ class FSAuthenticator:
         for key in parameters:
             result += "&" + str(key) + "=" + str(parameters[key])
         return result
+
+
 
 class UserFinder:
     def __init__(self, authenticator):
