@@ -349,6 +349,15 @@ class Venue:
         try: return self.data['tips']['count']
         except KeyError: return None
         
+    def tags(self):
+        '''Return the tags applied to the venue.'''
+        try: return self.data['tags']
+        except KeyError: return None
+    
+    def categories(self):
+        '''Return the categories of the venue'''
+        try: return self.data['categories']
+        except KeyError: return None
         
 
 class VenueFinder:
