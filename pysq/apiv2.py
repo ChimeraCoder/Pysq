@@ -357,7 +357,7 @@ class Venue:
     def categories(self):
         '''Return the categories of the venue'''
         try: return self.data['categories']
-        except KeyError: return []
+        except KeyError: return {}
         
 
 class VenueFinder:
