@@ -4,6 +4,7 @@ import json
 import time
 
 MAX_CHECKIN_REQUEST = 250
+API_DATEVERIFIED = 20111120 #Indication that the client is up to the specified date YYYYMMDD 
 
 class FSAuthenticator:
     def __init__(self, client_id, client_secret, redirect_uri):
@@ -28,12 +29,23 @@ class FSAuthenticator:
         #The oauth_token should always be the first parameter passed
         return "?oauth_token=" + self.access_token
 
+    def client_credentials(self):
+        return '?client_id={0}&client_secret={1}'.format(self.client_id, self.client_secret)
+        
     def query(self, path, parameters=None):
         '''Given a query path and parameters, return the json response to the query'''
         if parameters == None:
             parameters = {}
-        #parameters should be given as a dictionary
+        parameters['v'] = API_DATEVERIFIED
         url = "https://api.foursquare.com/v2/" + path + self.auth_param() + self.expand_params(parameters)
+        return json.load(urllib2.urlopen(url))['response']
+    
+    def userless_query(self, path, parameters=None):
+        '''Given a query path and parameters, return the json response to the query'''
+        if parameters == None:
+            parameters = {}
+        parameters['v'] = API_DATEVERIFIED
+        url = "https://api.foursquare.com/v2/" + path + self.client_credentials() + self.expand_params(parameters)
         return json.load(urllib2.urlopen(url))['response']
 
     def expand_params(self, parameters):
@@ -43,12 +55,14 @@ class FSAuthenticator:
             result += "&" + str(key) + "=" + str(parameters[key])
         return result
 
+
+
 class UserFinder:
     def __init__(self, authenticator):
         '''Given an FSAuthenticator, search for a user'''
         self.authenticator = authenticator
 
-    def findUser(self, id):
+    def findUser(self, id='self'):
         '''Retrieve the User associated with the given id. Raise an error if the authenticator is not authorized to access the User'''
         #Issue a request to create and return a new user object
         #return a new User object
@@ -282,10 +296,25 @@ class Venue:
         try: return self.data['contact']
         except KeyError: return None
 
-    #def location(self):
-    #    '''Return the location of the venue'''
-    #    try: return Location(self.data['location'])
-    #    except KeyError: return None
+    def twitter(self):
+        '''Return the venues's Twitter contact information'''
+        try: return self.data['contact']['twitter']
+        except KeyError: return None
+
+    def phone(self):
+        '''Return the venues's Phone number'''
+        try: return self.data['contact']['phone']
+        except KeyError: return None
+        
+    def formattedPhone(self):
+        '''Return the venues's Twitter contact information'''
+        try: return self.data['contact']['formattedPhone']
+        except KeyError: return None
+
+    def location(self):
+        '''Return the location of the venue'''
+        try: return self.data['location']
+        except KeyError: return None
 
     def verified(self):
         '''Return True if the venue has been verified'''
@@ -319,6 +348,29 @@ class Venue:
         '''Return the number of tips'''
         try: return self.data['tips']['count']
         except KeyError: return None
+        
+    def tags(self):
+        '''Return the tags applied to the venue.'''
+        try: return self.data['tags']
+        except KeyError: return []
+    
+    def categories(self):
+        '''Return the categories of the venue'''
+        try: return self.data['categories']
+        except KeyError: return {}
+        
+
+class VenueFinder:
+    def __init__(self, authenticator):
+        '''Given an FSAuthenticator, search for a user'''
+        self.authenticator = authenticator
+
+    def findVenue(self, id):
+        '''Retrieve the Venue by id. Returns Venue object'''
+        result = self.authenticator.userless_query('venues/' + id)
+        return Venue(self.authenticator, result['venue'])
+    
+    
 
 class Photo:
 
